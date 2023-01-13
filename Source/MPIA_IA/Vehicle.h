@@ -15,30 +15,40 @@ class MPIA_IA_API AVehicle : public APawn
 	GENERATED_BODY()
 
 protected:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Mass;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector Position;
 	FVector Velocity;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float MaxForce ;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float MaxSpeed ;
+	FMatrix Orientation; 
+	float Mass;
 
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector Point;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxForce;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxSpeed;
+	
+	FTimerHandle TimerHandle; 
+
 public:
 	// Sets default values for this pawn's properties
 	AVehicle();
 
 	UFUNCTION(BlueprintCallable)
-	FVector Seek(); 
+	void UpdatePosition();
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateOrientation();
+
+	UFUNCTION(BlueprintCallable)
+	FVector Seek();
+
+	UFUNCTION(BlueprintCallable)
+	FVector Flee();
 
 protected:
 	// Called when the game starts or when spawned
