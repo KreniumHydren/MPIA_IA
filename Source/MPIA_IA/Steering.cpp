@@ -11,6 +11,8 @@ FVector Truncate(FVector Vector, float Max)
 	return (Vector * Max) / Vector.Length();  
 }
 
+
+
 // Sets default values
 ASteering::ASteering()
 {
@@ -18,10 +20,27 @@ ASteering::ASteering()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+void ASteering::UpdatePosition()
+{
+	//FVector VelocityTruncate = Truncate(Controller->Movement->Velocity + Controller->Movement->Acceleration, Controller->Movement->MaxSpeed);
+	//Controller->Movement->Velocity = VelocityTruncate;
+	//UE_LOG(LogTemp, Warning, TEXT("PositionVelocity : %s"), *VelocityTruncate.ToString());
+	Controller->SetActorLocation(Controller->GetActorLocation() + Controller->Movement->Velocity);
+}
+
+void ASteering::UpdateRotation()
+{
+	FVector NewForward = Controller->GetVelocity(); 
+	UKismetMathLibrary::Vector_Normalize(NewForward);
+	FVector NewSide = FVector::CrossProduct(Controller->GetVelocity(), FVector(0.f, 0.f, 0.f));
+	FVector NewUp = FVector::CrossProduct(Controller->GetVelocity(), NewSide); 
+	Controller->SetActorRotation(NewUp.Rotation()); 
+}
+
 FVector ASteering::Seek()
 {
 	FVector DesiredVelocity = UKismetMathLibrary::Subtract_VectorVector(AI->GetActorLocation(), Controller->GetActorLocation()); 
-	UKismetMathLibrary::Vector_Normalize(DesiredVelocity, Controller->GetMovementComponent()->GetMaxSpeed()); 
+	UKismetMathLibrary::Vector_Normalize(DesiredVelocity, Controller->Movement->MaxSpeed); 
 	return UKismetMathLibrary::Subtract_VectorVector(DesiredVelocity, Controller->GetMovementComponent()->Velocity); 
 }
 
@@ -30,7 +49,7 @@ void ASteering::CallSeek()
 	Controller->GetMovementComponent()->Velocity = Seek();
 }
 
-void ASteering::Flee()
+void ASteering::CallFlee()
 {
 	Controller->GetMovementComponent()->Velocity = -Seek(); 
 }
@@ -46,8 +65,8 @@ void ASteering::BeginPlay()
 void ASteering::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	CallSeek();
-	Controller->SetActorLocation(Controller->GetActorLocation() + GetVelocity()); 
+	CallFlee();
+	UpdatePosition();
+	UpdateRotation();
 }
 

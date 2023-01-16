@@ -16,7 +16,16 @@ class MPIA_IA_API AVehicle : public APawn
 public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh *Mesh; 
+	float MaxSpeedEffective = 250;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxForce = 20;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Mass = 20;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	UFloatingPawnMovement *Movement; 
 
 public:
 	// Sets default values for this pawn's properties
@@ -29,8 +38,5 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	UFUNCTION(BlueprintSetter)
-	void SetMesh(UStaticMesh * DefaultMesh);
 
 };

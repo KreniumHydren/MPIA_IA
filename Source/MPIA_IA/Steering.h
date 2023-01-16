@@ -18,17 +18,17 @@ public:
 	AVehicle *Controller;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh *ControllerMesh; 
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	AVehicle *AI;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh *AIMesh; 
-	
 public:	
 	// Sets default values for this actor's properties
 	ASteering();
+
+	UFUNCTION(BlueprintCallable)
+	void UpdatePosition();
+	
+	UFUNCTION(BlueprintCallable)
+	void UpdateRotation(); 
 
 	UFUNCTION(BlueprintCallable)
 	FVector Seek();
@@ -37,7 +37,7 @@ public:
 	void CallSeek(); 
 
 	UFUNCTION(BlueprintCallable)
-	void Flee();
+	void CallFlee();
 
 protected:
 	// Called when the game starts or when spawned
