@@ -40,15 +40,6 @@ void ASteering::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TSubclassOf<AVehicle> ClassToFind; // Needs to be populated somehow (e.g. by exposing to blueprints as uproperty and setting it there
-
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, FoundActors);
-
-	for (TActorIterator It(FoundActors); It; ++It)
-	{
-		
-	}
 }
 
 // Called every frame
