@@ -31,7 +31,6 @@
 			"ProtocolFactory.cpp.obj",
 			"RiderLink.cpp.obj",
 			"BlueprintReference.Generated.cpp.obj",
-			"ConnectionInfo.Generated.cpp.obj",
 			"UE4Library.Generated.cpp.obj",
 			"RdEditorModel.Generated.cpp.obj"
 		]

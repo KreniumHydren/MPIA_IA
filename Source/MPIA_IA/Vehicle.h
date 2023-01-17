@@ -15,7 +15,7 @@ class MPIA_IA_API AVehicle : public APawn
 public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float MaxSpeedEffective = 500.f;
+	float MaxSpeedEffective = 5.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxForce = 100.f;
