@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Vehicle.h"
+#include "VehicleController.h"
 #include "GameFramework/Actor.h"
 #include "Steering.generated.h"
 
@@ -15,7 +16,7 @@ class MPIA_IA_API ASteering : public AActor
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	AVehicle *Controller;
+	AVehicleController *Controller;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	AVehicle *AI;
@@ -39,6 +40,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CallFlee();
 
+	UFUNCTION(BlueprintCallable)
+	void CallArrival(); 
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -46,5 +50,4 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-};
+}; 
