@@ -2,7 +2,6 @@
 
 
 #include "Vehicle.h"
-#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AVehicle::AVehicle()

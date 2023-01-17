@@ -3,11 +3,6 @@
 
 #include "Steering.h"
 
-#include <UIAutomationCore.h>
-
-#include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
-
 FVector Truncate(FVector Vector, float Max)
 {
 	return (Vector * Max) / Vector.Length();  
@@ -20,42 +15,43 @@ ASteering::ASteering()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ASteering::UpdatePosition()
+void ASteering::UpdatePosition(FVector SteeringDirection)
 {
-	//FVector VelocityTruncate = Truncate(Controller->Movement->Velocity + Controller->Movement->Acceleration, Controller->Movement->MaxSpeed);
-	//Controller->Movement->Velocity = VelocityTruncate;
+	FVector Acceleration = Truncate(SteeringDirection, AI->MaxForce)  / AI->Mass; 
+	FVector VelocityTruncate = Truncate(AI->Movement->Velocity + Acceleration, AI->Movement->MaxSpeed);
+	AI->Movement->Velocity = VelocityTruncate;
 	AI->SetActorLocation(AI->GetActorLocation() + AI->Movement->Velocity);
 }
 
 void ASteering::UpdateRotation()
 {
-	FVector NewForward = AI->GetVelocity(); 
-	UKismetMathLibrary::Vector_Normalize(NewForward);
-	FVector NewSide = FVector::CrossProduct(AI->GetVelocity(), FVector(0.f, 0.f, 0.f));
-	FVector NewUp = FVector::CrossProduct(AI->GetVelocity(), NewSide); 
+	FVector NewForward = AI->Movement->Velocity;
+	NewForward.Normalize();
+	FVector NewSide = FVector::CrossProduct(AI->Movement->Velocity, FVector(0.f, 0.f, 0.f));
+	FVector NewUp = FVector::CrossProduct(AI->Movement->Velocity, NewSide); 
 	AI->SetActorRotation(NewUp.Rotation()); 
-}
-
-FVector ASteering::Seek()
-{
-	FVector DesiredVelocity = UKismetMathLibrary::Subtract_VectorVector(Controller->GetActorLocation(), AI->GetActorLocation()); 
-	UKismetMathLibrary::Vector_Normalize(DesiredVelocity, AI->Movement->MaxSpeed); 
-	return UKismetMathLibrary::Subtract_VectorVector(DesiredVelocity, AI->GetMovementComponent()->Velocity); 
 }
 
 void ASteering::CallSeek()
 {
-	AI->GetMovementComponent()->Velocity = Seek();
+	FVector DesiredVelocity = Controller->GetActorLocation() - AI->GetActorLocation();
+	DesiredVelocity.Normalize();
+	DesiredVelocity *= AI->Movement->MaxSpeed;
+	AI->Movement->Velocity = DesiredVelocity - AI->Movement->Velocity;
+	FVector Acceleration = Truncate(AI->Movement->Velocity, AI->MaxForce) / AI->Mass; 
+	FVector VelocityTruncate = Truncate(AI->Movement->Velocity + Acceleration, AI->Movement->MaxSpeed);
+	AI->Movement->Velocity = VelocityTruncate;
+	AI->SetActorLocation(AI->GetActorLocation() + AI->Movement->Velocity);
 }
 
 void ASteering::CallFlee()
 {
-	AI->GetMovementComponent()->Velocity = -Seek(); 
+	//AI->Movement->Velocity = -Seek(); 
 }
 
 void ASteering::CallArrival()
 {
-	float SlowingDistance = 0.f; 
+	float SlowingDistance = 1.f; 
 	FVector Offset = Controller->GetActorLocation() - AI->GetActorLocation();
 	float Distance = Offset.Size(); 
 	float RampedSpeed = AI->Movement->GetMaxSpeed() * (Distance / SlowingDistance);
@@ -77,7 +73,6 @@ void ASteering::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	CallSeek();
-	UpdatePosition();
-	//UpdateRotation();
+
 }
 

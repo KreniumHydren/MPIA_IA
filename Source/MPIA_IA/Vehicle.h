@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/TargetPoint.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "GameFramework/Pawn.h"
 #include "Vehicle.generated.h"
@@ -16,13 +15,13 @@ class MPIA_IA_API AVehicle : public APawn
 public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float MaxSpeedEffective = 250;
+	float MaxSpeedEffective = 500.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float MaxForce = 20;
+	float MaxForce = 100.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Mass = 20;
+	float Mass = 20.f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	UFloatingPawnMovement *Movement; 

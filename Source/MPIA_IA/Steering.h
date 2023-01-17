@@ -26,13 +26,10 @@ public:
 	ASteering();
 
 	UFUNCTION(BlueprintCallable)
-	void UpdatePosition();
+	void UpdatePosition(FVector SteeringDirection);
 	
 	UFUNCTION(BlueprintCallable)
 	void UpdateRotation(); 
-
-	UFUNCTION(BlueprintCallable)
-	FVector Seek();
 	
 	UFUNCTION(BlueprintCallable)
 	void CallSeek(); 
