@@ -36,10 +36,10 @@ void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 void AVehicleController::MoveForward(float Value)
 {
-	MovementDirection.X = FMath::Clamp(Value, -1.f, 1.f) * 10.f;
+	MovementDirection.X = FMath::Clamp(Value, -1.f, 1.f) * LengthInput;
 }
 
 void AVehicleController::MoveRight(float Value)
 {
-	MovementDirection.Y = FMath::Clamp(Value, -1.f, 1.f) * 10.f;
+	MovementDirection.Y = FMath::Clamp(Value, -1.f, 1.f) * LengthInput;
 }

@@ -15,6 +15,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
 	float MaxSpeedEffective;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	float LengthInput = 25.0;
 
     FVector MovementDirection;
 
