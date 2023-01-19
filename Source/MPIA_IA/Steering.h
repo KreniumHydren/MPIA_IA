@@ -23,7 +23,13 @@ public:
 	FString Mode;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float SlowingDistance = 10.f; 
+	float SlowingDistance = 10.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MarginDistance = 300.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float InterpolationSpeed = 5.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	AVehicleController *Controller;
@@ -32,7 +38,10 @@ public:
 	AVehicle *AI;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<ATargetPoint*> Circuit; 
+	TArray<ATargetPoint*> Circuit;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ATargetPoint * FixedTarget; 
 
 public:	
 	// Sets default values for this actor's properties
@@ -43,6 +52,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CallFlee();
+
+	UFUNCTION(BlueprintCallable)
+	void CallSeekToController(); 
+
+	UFUNCTION(BlueprintCallable)
+	void CallFleeToController();
 
 	UFUNCTION(BlueprintCallable)
 	void CallArrival();

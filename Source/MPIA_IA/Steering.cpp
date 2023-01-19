@@ -17,26 +17,62 @@ ASteering::ASteering()
 
 void ASteering::CallSeek()
 {
-	FVector VecDesired = Controller->GetActorLocation() - AI->GetActorLocation();
-	VecDesired.Normalize();
-	VecDesired *= AI->Movement->MaxSpeed;
-	FVector VecSteering = VecDesired - AI->Movement->Velocity;
-	FVector NewVelocity = AI->Movement->Velocity + VecSteering;
-	AI->Movement->Velocity = NewVelocity;
-	AI->SetActorLocation(AI->GetActorLocation() + AI->Movement->Velocity);
-	AI->SetActorRotation(AI->Movement->Velocity.Rotation()); 
+	FVector VecDesired = FixedTarget->GetActorLocation() - AI->GetActorLocation();
+	if(VecDesired.Length() > 0)
+	{
+		VecDesired.Normalize();
+		VecDesired *= AI->Movement->MaxSpeed;
+		FVector VecSteering = VecDesired - AI->Movement->Velocity;
+		FVector NewVelocity = AI->Movement->Velocity + VecSteering;
+		AI->Movement->Velocity = NewVelocity;
+		AI->SetActorLocation(AI->GetActorLocation() + AI->Movement->Velocity);
+		AI->SetActorRotation(AI->Movement->Velocity.Rotation());
+	}
 }
 
 void ASteering::CallFlee()
 {
+	FVector VecDesired = FixedTarget->GetActorLocation() - AI->GetActorLocation();
+	if(VecDesired.Length() > 0)
+	{
+		VecDesired.Normalize();
+		VecDesired *= AI->Movement->MaxSpeed;
+		FVector VecSteering = VecDesired - AI->Movement->Velocity;
+		FVector NewVelocity = AI->Movement->Velocity + VecSteering;
+		AI->Movement->Velocity = -NewVelocity;
+		AI->SetActorLocation(AI->GetActorLocation() + AI->Movement->Velocity);
+		AI->SetActorRotation(AI->Movement->Velocity.Rotation());
+	}
+}
+
+void ASteering::CallSeekToController()
+{
 	FVector VecDesired = Controller->GetActorLocation() - AI->GetActorLocation();
-	VecDesired.Normalize();
-	VecDesired *= AI->Movement->MaxSpeed;
-	FVector VecSteering = VecDesired - AI->Movement->Velocity;
-	FVector NewVelocity = AI->Movement->Velocity + VecSteering;
-	AI->Movement->Velocity = -NewVelocity;
-	AI->SetActorLocation(AI->GetActorLocation() + AI->Movement->Velocity);
-	AI->SetActorRotation(AI->Movement->Velocity.Rotation()); 
+	if(VecDesired.Length() > 0)
+	{
+		VecDesired.Normalize();
+		VecDesired *= AI->Movement->MaxSpeed;
+		FVector VecSteering = VecDesired - AI->Movement->Velocity;
+		FVector NewVelocity = AI->Movement->Velocity + VecSteering;
+		AI->Movement->Velocity = NewVelocity;
+		AI->SetActorLocation(AI->GetActorLocation() + AI->Movement->Velocity);
+		AI->SetActorRotation(AI->Movement->Velocity.Rotation());
+	}
+}
+
+void ASteering::CallFleeToController()
+{
+	FVector VecDesired = Controller->GetActorLocation() - AI->GetActorLocation();
+	if(VecDesired.Length() > 0)
+	{
+		VecDesired.Normalize();
+		VecDesired *= AI->Movement->MaxSpeed;
+		FVector VecSteering = VecDesired - AI->Movement->Velocity;
+		FVector NewVelocity = AI->Movement->Velocity + VecSteering;
+		AI->Movement->Velocity = -NewVelocity;
+		AI->SetActorLocation(AI->GetActorLocation() + AI->Movement->Velocity);
+		AI->SetActorRotation(AI->Movement->Velocity.Rotation());
+	}
 }
 
 void ASteering::CallArrival()
@@ -44,18 +80,21 @@ void ASteering::CallArrival()
 	FVector Offset = Controller->GetActorLocation() - AI->GetActorLocation();
 	float Distance = Offset.Size(); 
 	float RampedSpeed = AI->Movement->GetMaxSpeed() * (Distance / SlowingDistance);
-	float ClippedSpeed = FMath::Min(RampedSpeed, AI->Movement->MaxSpeed); 
+	float ClippedSpeed = FMath::Min(RampedSpeed, AI->Movement->MaxSpeed);
+	AI->Movement->MaxSpeed = ClippedSpeed; 
 	FVector DesiredVelocity = (ClippedSpeed / Distance) * Offset;
     FVector Steering = DesiredVelocity - AI->Movement->Velocity;
 	AI->Movement->Velocity = Steering;
 	AI->SetActorLocation(AI->GetActorLocation() + AI->Movement->Velocity);
-	AI->SetActorRotation(AI->Movement->Velocity.Rotation()); 
+	//FMath::RInterpTo(AI->Movement->GetActorTransform().Rotator(), AI->Movement->Velocity.Rotation(), GetWorld()->GetDeltaSeconds(), 5.f);
+	AI->SetActorRotation(FMath::RInterpTo(AI->Movement->GetActorTransform().Rotator(), AI->Movement->Velocity.Rotation(), GetWorld()->GetDeltaSeconds(), InterpolationSpeed));
+	//AI->SetActorRotation(AI->Movement->Velocity.Rotation());
 }
 
 void ASteering::CallCircuit()
 {
 	ATargetPoint * Target = Circuit[CurrentIndex];
-	if(FVector::Dist(AI->GetActorLocation(), Target->GetActorLocation()) <= 50.f) {
+	if(FVector::Dist(AI->GetActorLocation(), Target->GetActorLocation()) <= MarginDistance) {
 		CurrentIndex += 1;
 		int Length = Circuit.Num();
 		if (CurrentIndex >= Length) {
@@ -70,13 +109,15 @@ void ASteering::CallCircuit()
 	FVector Steering = DesiredVelocity - AI->Movement->Velocity;
 	AI->Movement->Velocity = Steering;
 	AI->SetActorLocation(AI->GetActorLocation() + AI->Movement->Velocity);
-	AI->SetActorRotation(AI->Movement->Velocity.Rotation());
+	//FMath::RInterpTo(AI->Movement->GetActorTransform().Rotator(), AI->Movement->Velocity.Rotation(), GetWorld()->GetDeltaSeconds(), 5.f);
+	AI->SetActorRotation(FMath::RInterpTo(AI->Movement->GetActorTransform().Rotator(), AI->Movement->Velocity.Rotation(), GetWorld()->GetDeltaSeconds(), InterpolationSpeed));
+	//AI->SetActorRotation(AI->Movement->Velocity.Rotation());
 }
 
 void ASteering::CallOneWay()
 {
 	ATargetPoint * Target = Circuit[CurrentIndex];
-	if(FVector::Dist(AI->GetActorLocation(), Target->GetActorLocation()) <= 50.f) {
+	if(FVector::Dist(AI->GetActorLocation(), Target->GetActorLocation()) <= MarginDistance) {
 		CurrentIndex += 1;
 		int Length = Circuit.Num();
 		if (CurrentIndex >= Length) {
@@ -91,13 +132,15 @@ void ASteering::CallOneWay()
 	FVector Steering = DesiredVelocity - AI->Movement->Velocity;
 	AI->Movement->Velocity = Steering;
 	AI->SetActorLocation(AI->GetActorLocation() + AI->Movement->Velocity);
-	AI->SetActorRotation(AI->Movement->Velocity.Rotation());
+	//FMath::RInterpTo(AI->Movement->GetActorTransform().Rotator(), AI->Movement->Velocity.Rotation(), GetWorld()->GetDeltaSeconds(), 5.f);
+	AI->SetActorRotation(FMath::RInterpTo(AI->Movement->GetActorTransform().Rotator(), AI->Movement->Velocity.Rotation(), GetWorld()->GetDeltaSeconds(), InterpolationSpeed));
+	//AI->SetActorRotation(AI->Movement->Velocity.Rotation());
 }
 
 void ASteering::CallTwoWay()
 {
 	ATargetPoint * Target = Circuit[CurrentIndex];
-	if(FVector::Dist(AI->GetActorLocation(), Target->GetActorLocation()) <= 50.f) {
+	if(FVector::Dist(AI->GetActorLocation(), Target->GetActorLocation()) <= MarginDistance) {
 		int Length = Circuit.Num();
 		if(StateTwoWay)
 		{
@@ -124,7 +167,9 @@ void ASteering::CallTwoWay()
 	FVector Steering = DesiredVelocity - AI->Movement->Velocity;
 	AI->Movement->Velocity = Steering;
 	AI->SetActorLocation(AI->GetActorLocation() + AI->Movement->Velocity);
-	AI->SetActorRotation(AI->Movement->Velocity.Rotation());
+	//FMath::RInterpTo(AI->Movement->GetActorTransform().Rotator(), AI->Movement->Velocity.Rotation(), GetWorld()->GetDeltaSeconds(), 5.f);
+	AI->SetActorRotation(FMath::RInterpTo(AI->Movement->GetActorTransform().Rotator(), AI->Movement->Velocity.Rotation(), GetWorld()->GetDeltaSeconds(), InterpolationSpeed));
+	//AI->SetActorRotation(AI->Movement->Velocity.Rotation());
 }
 
 // Called when the game starts or when spawned
@@ -148,10 +193,10 @@ void ASteering::Tick(float DeltaTime)
 		CallFlee();
 	} else if(Mode == "Pursuit") {
 		Controller->EnableInput(PlayerController);
-		CallSeek();
+		CallSeekToController();
 	} else if(Mode == "Evade") {
 		Controller->EnableInput(PlayerController);
-		CallFlee(); 
+		CallFleeToController(); 
 	} else if(Mode == "Arrival") {
 		Controller->EnableInput(PlayerController);
 		CallArrival(); 
@@ -162,9 +207,8 @@ void ASteering::Tick(float DeltaTime)
 	} else if(Mode == "OneWay") {
 		Controller->EnableInput(PlayerController);
 		CallOneWay(); 
-	} else if(Mode == "TwoWay") {
+	} else if(Mode == "TwoWay")
+	{
 		Controller->EnableInput(PlayerController);
-		CallTwoWay();
 	}
 }
-

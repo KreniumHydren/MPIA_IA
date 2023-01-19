@@ -12,9 +12,6 @@ class MPIA_IA_API AVehicleController : public APawn
 	GENERATED_BODY()
 
 public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
-	float MaxSpeedEffective;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
 	float LengthInput = 25.0;

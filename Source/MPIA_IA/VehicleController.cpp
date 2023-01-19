@@ -21,7 +21,7 @@ void AVehicleController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if(!MovementDirection.IsZero())
 	{
-		const FVector NewLocation = GetActorLocation() + (MovementDirection * DeltaTime * MaxSpeedEffective);
+		const FVector NewLocation = GetActorLocation() + (MovementDirection * DeltaTime);
 		SetActorLocation(NewLocation); 
 	}
 }
