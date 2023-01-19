@@ -202,7 +202,6 @@ void ASteering::Tick(float DeltaTime)
 		CallArrival(); 
 	} else if(Mode == "Circuit") {
 		Controller->EnableInput(PlayerController);
-		//PlayerController->SetViewTargetWithBlend(AI, 1.f); 
 		CallCircuit(); 
 	} else if(Mode == "OneWay") {
 		Controller->EnableInput(PlayerController);
@@ -210,5 +209,6 @@ void ASteering::Tick(float DeltaTime)
 	} else if(Mode == "TwoWay")
 	{
 		Controller->EnableInput(PlayerController);
+		CallTwoWay(); 
 	}
 }
