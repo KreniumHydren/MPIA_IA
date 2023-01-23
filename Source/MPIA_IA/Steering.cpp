@@ -206,6 +206,39 @@ void ASteering::CallTwoWay()
 	AI->SetActorRotation(FMath::RInterpTo(AI->Movement->GetActorTransform().Rotator(), AI->Movement->Velocity.Rotation(), GetWorld()->GetDeltaSeconds(), InterpolationSpeed));
 }
 
+void ASteering::CallAvoidance()
+{
+	AI->Movement->Velocity.Normalize(); 
+	FVector Ahead = AI->GetActorLocation() + AI->Movement->Velocity * MAX_AHEAD; 
+	
+	for(size_t index = 0; index < Obstacles.Num(); index++)
+	{
+		FVector AvoidanceAhead = Ahead - Obstacles[index]->GetActorLocation();
+		AvoidanceAhead.Normalize();
+		FVector AvoidanceForce = AvoidanceAhead * MAX_AVOID_FORCE;
+
+		if(FVector::Dist(AI->GetActorLocation(), Obstacles[index]->GetActorLocation()) <= 300.f)
+		{
+			FVector VecDesired = FixedTarget->GetActorLocation() - AI->GetActorLocation();
+			GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("DEBUG")); 
+			VecDesired.Normalize();
+			VecDesired *= AI->Movement->MaxSpeed;
+			FVector VecSteering = VecDesired - AI->Movement->Velocity;
+			FVector SteeringForce = Truncate(VecSteering, AI->MaxForce);
+			FVector Acceleration = SteeringForce / AI->Mass; 
+			FVector NewVelocity = AI->Movement->Velocity + Acceleration;
+			FVector Velocity = Truncate(NewVelocity, AI->Movement->MaxSpeed); 
+			AI->Movement->Velocity = -Velocity;
+			AI->SetActorLocation(AI->GetActorLocation() + AI->Movement->Velocity + AvoidanceForce);
+		}
+	}
+}
+
+void ASteering::Update()
+{
+	
+}
+
 // Called when the game starts or when spawned
 void ASteering::BeginPlay()
 {
@@ -225,6 +258,7 @@ void ASteering::Tick(float DeltaTime)
 	} else if(Mode == "Flee") {
 		Controller->DisableInput(PlayerController);
 		CallFlee();
+		CallAvoidance(); 
 	} else if(Mode == "Pursuit") {
 		Controller->EnableInput(PlayerController);
 		CallSeekToController();

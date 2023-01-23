@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Vehicle.h"
 #include "VehicleController.h"
+#include "Engine/StaticMeshActor.h"
 #include "Engine/TargetPoint.h"
 #include "GameFramework/Actor.h"
 #include "Steering.generated.h"
@@ -30,6 +31,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float InterpolationSpeed = 5.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MAX_AHEAD = 10.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MAX_AVOID_FORCE = 10.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	AVehicleController *Controller;
@@ -39,6 +46,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<ATargetPoint*> Circuit;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AStaticMeshActor*> Obstacles;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ATargetPoint * FixedTarget; 
@@ -70,6 +80,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CallTwoWay();
+
+	UFUNCTION(BlueprintCallable)
+	void CallAvoidance(); 
+
+	UFUNCTION(BlueprintCallable)
+	void Update(); 
 
 protected:
 	// Called when the game starts or when spawned
