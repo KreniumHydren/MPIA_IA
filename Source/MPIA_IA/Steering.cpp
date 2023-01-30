@@ -208,6 +208,9 @@ void ASteering::CallTwoWay()
 
 void ASteering::CallAvoidance()
 {
+	/**
+	 * Avoidance ne fonctionne pas car l'IA va éviter les obstacles par l'axe des Z. 
+	 */
 	AI->Movement->Velocity.Normalize(); 
 	FVector Ahead = AI->GetActorLocation() + AI->Movement->Velocity * MAX_AHEAD; 
 	
@@ -258,7 +261,7 @@ void ASteering::Tick(float DeltaTime)
 	} else if(Mode == "Flee") {
 		Controller->DisableInput(PlayerController);
 		CallFlee();
-		CallAvoidance(); 
+		//CallAvoidance(); 
 	} else if(Mode == "Pursuit") {
 		Controller->EnableInput(PlayerController);
 		CallSeekToController();
