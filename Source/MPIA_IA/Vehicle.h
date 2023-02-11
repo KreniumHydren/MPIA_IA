@@ -15,7 +15,7 @@ class MPIA_IA_API AVehicle : public APawn
 public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float MaxSpeedEffective = 5.f;
+	float MaxSpeed = 5.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxForce = 100.f;
@@ -24,7 +24,10 @@ public:
 	float Mass = 20.f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
-	UFloatingPawnMovement *Movement; 
+	FVector Velocity = FVector(0.f, 0.f, 0.f);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	FVector Position;
 
 public:
 	// Sets default values for this pawn's properties
