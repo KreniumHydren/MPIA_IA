@@ -4,24 +4,18 @@
 #include "Node.h"
 
 // Sets default values
-ANode::ANode()
-{
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+NodePoint::NodePoint()
+{}
 
+NodePoint::NodePoint(float Cost, float Heuristic, AActor* Point) : COST(Cost), HEURISTIC(Heuristic), POINT(Point) 
+{}
+
+bool NodePoint::isFinish(AActor* Point)
+{
+	return POINT == Point; 
 }
 
-// Called when the game starts or when spawned
-void ANode::BeginPlay()
+bool NodePoint::operator==(const NodePoint& Node) const
 {
-	Super::BeginPlay();
-	
+	return POINT == Node.POINT && COST == Node.COST && HEURISTIC == Node.HEURISTIC && NAME == Node.NAME; 
 }
-
-// Called every frame
-void ANode::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-

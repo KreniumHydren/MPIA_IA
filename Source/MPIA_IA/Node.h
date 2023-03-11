@@ -4,28 +4,42 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Node.generated.h"
 
-UCLASS()
-class MPIA_IA_API ANode : public AActor
+class MPIA_IA_API NodePoint
 {
-	GENERATED_BODY()
 
 public:
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float COST = 1.0;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bVisited = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName NAME; 
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float HEURISTIC;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	AActor* POINT;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AActor*> Neighbors; 
 	
 public:	
 	// Sets default values for this actor's properties
-	ANode();
+	NodePoint();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	NodePoint(float Cost, float Heuristic, AActor* Point);
+	
+	NodePoint(float Cost, float Heuristic, FName Name, AActor* Point); 
+	
+	bool isFinish(AActor* Point);
+    
+    inline bool operator==(const NodePoint& Node) const;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	~NodePoint(); 
 
 };

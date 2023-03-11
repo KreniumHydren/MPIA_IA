@@ -1,6 +1,7 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=068A8C07_002D739F_002DD4E2_002D9AF3_002D2BA23E500322_002Ff_003ASteering_002Ecpp/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=068A8C07_002D739F_002DD4E2_002D9AF3_002D2BA23E500322_002Ff_003AVehicle_002Ecpp/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=418B41C8_002DBC20_002DD4E5_002DC7DD_002D59339347D02F_002Ff_003APathfinding_002Ecpp/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=418B41C8_002DBC20_002DD4E5_002DC7DD_002D59339347D02F_002Ff_003ASteering_002Ecpp/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=418B41C8_002DBC20_002DD4E5_002DC7DD_002D59339347D02F_002Ff_003ASteering_002Eh/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=B44D14D5_002D43C0_002D1046_002D5B1C_002DE722C7717F51_002Ff_003AVehicle_002Ecpp/@EntryIndexedValue">ExplicitlyExcluded</s:String></wpf:ResourceDictionary>

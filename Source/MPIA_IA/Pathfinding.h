@@ -5,30 +5,24 @@
 #include "CoreMinimal.h"
 #include "Node.h"
 #include "GameFramework/Actor.h"
-#include "Pathfinding.generated.h"
 
-UCLASS()
-class MPIA_IA_API APathfinding : public AActor
+class MPIA_IA_API PathfindingAlgo
 {
-	GENERATED_BODY()
 
 public:
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<ANode*> Circuit;
+
+	UPROPERTY(VisibleAnywhere, Category = "Graph")
+	TArray<AActor*> Circuit;
 	
 public:	
-	// Sets default values for this actor's properties
-	APathfinding();
+	PathfindingAlgo(); 
 
-	void FindPath(ANode * Start, ANode * End); 
+	TArray<AActor*> FindPath(AActor * Start, AActor * End);
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	void AddPoint(AActor *Point); 
+	
+	float CalculateHeuristic(float Cost, AActor* Start, AActor* End);
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+	~PathfindingAlgo();
+	
 };
