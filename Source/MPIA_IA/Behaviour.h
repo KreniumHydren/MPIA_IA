@@ -7,6 +7,7 @@
 UENUM(BlueprintType)
 enum class Behaviour : uint8
 {
+	Arrival,
 	OnlyPoint,
 	SeveralPoints,
 	Circuit

@@ -21,13 +21,18 @@ void AManager::Initialize()
 
 	for (AActor* Actor : AllActors)
 	{
-		Pathfinding->AddPoint(Actor);
-		if (Actor->GetActorNameOrLabel().Equals("BP_GraphPoint_A")) StartPoint =Actor;
-		if (Actor->GetActorNameOrLabel().Equals("BP_GraphPoint_G")) EndPoint = Actor;
+		AGraphPoint * Point = Cast<AGraphPoint>(Actor); 
+		Pathfinding->AddPoint(Point);
+		if (Actor->GetActorNameOrLabel().Equals("BP_GraphPoint_A")) {
+			StartPoint = Point;
+		}
+		if (Actor->GetActorNameOrLabel().Equals("BP_GraphPoint_G")) {
+			EndPoint = Point;
+		}
 	}
 }
 
-void AManager::AddPoint(AActor * Point)
+void AManager::AddPoint(AGraphPoint * Point)
 {
 	AllPointsSelected.Add(Point); 
 }
@@ -37,21 +42,21 @@ void AManager::Clear()
 	AllPointsSelected.Empty(); 
 }
 
-TArray<AActor*> AManager::ShortestPath(AActor* Start, AActor* End)
+TArray<AGraphPoint*> AManager::ShortestPath(AGraphPoint* Start, AGraphPoint* End)
 {
 	return Pathfinding->FindPath(Start, End); 
 }
 
-TArray<AActor*> AManager::ShortestPathCurrentPoint()
+TArray<AGraphPoint*> AManager::ShortestPathCurrentPoint()
 {
 	return Pathfinding->FindPath(StartPoint, EndPoint);
 }
 
-TArray<AActor*> AManager::ShortestPathSelectedPoints()
+TArray<AGraphPoint*> AManager::ShortestPathSelectedPoints()
 {
-	TArray<AActor*> Result;
-	TArray<AActor*> Array;
-	AActor* Last = nullptr;
+	TArray<AGraphPoint*> Result;
+	TArray<AGraphPoint*> Array;
+	AGraphPoint* Last = nullptr;
 	bool First = true;
 
 	if (AllPointsSelected.IsEmpty())
@@ -60,7 +65,7 @@ TArray<AActor*> AManager::ShortestPathSelectedPoints()
 		return Result;
 	}
 
-	for (AActor* Point : AllPointsSelected)
+	for (AGraphPoint* Point : AllPointsSelected)
 	{
 		if (First)
 		{
@@ -79,11 +84,11 @@ TArray<AActor*> AManager::ShortestPathSelectedPoints()
 	return Result; 
 }
 
-TArray<AActor*> AManager::ShortestPathSelectedPointsWithReturn()
+TArray<AGraphPoint*> AManager::ShortestPathSelectedPointsWithReturn()
 {
-	TArray<AActor*> Result;
-	TArray<AActor*> Array;
-	AActor* Last = nullptr;
+	TArray<AGraphPoint*> Result;
+	TArray<AGraphPoint*> Array;
+	AGraphPoint* Last = nullptr;
 	bool First = true;
 
 	if (AllPointsSelected.IsEmpty())
@@ -92,7 +97,7 @@ TArray<AActor*> AManager::ShortestPathSelectedPointsWithReturn()
 		return Result;
 	}
 
-	for (AActor* Point : AllPointsSelected)
+	for (AGraphPoint* Point : AllPointsSelected)
 	{
 		if (First)
 		{
@@ -129,6 +134,4 @@ void AManager::BeginPlay()
 void AManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
-

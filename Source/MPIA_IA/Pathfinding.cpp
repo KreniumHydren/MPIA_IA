@@ -8,41 +8,42 @@
 PathfindingAlgo::PathfindingAlgo()
 {}
 
-TArray<AActor*> PathfindingAlgo::FindPath(AActor* Start, AActor* End)
+TArray<AGraphPoint*> PathfindingAlgo::FindPath(AGraphPoint* Start, AGraphPoint* End)
 {
-	if(!Start || !End) return TArray<AActor*>();
+	if(Start == nullptr || End == nullptr) return TArray<AGraphPoint*>();
 	
 	TArray<NodePoint*> File;
-	TArray<AActor*> FileVisited;
+	TArray<AGraphPoint*> FileVisited;
 
 	float C = 0.0f;
 	float H = 0.0f;
 	
-	File.Add(new NodePoint(C, H, Start));
-
-	TArray<AActor*> Path;
+	File.Add(new NodePoint(C, H, Start, Start->Neighbors));
 	
-	NodePoint* Visited; 
+	TArray<AGraphPoint*> Path;
 	
 	while (!File.IsEmpty())
 	{
 		NodePoint* Node = File[0];
-
+		
 		C = C + 1;
 
 		if (Node->isFinish(End))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Path found !"));
+			
 			Path.Add(Node->POINT);
 			File.Empty();
 			FileVisited.Empty();
 			return Path;
 		}
 		
-		TArray<AActor*> Neighbors = Node->Neighbors;
-		for (AActor* N : Neighbors)
+		TArray<AGraphPoint*> Neighbors = Node->Neighbors;
+		for (AGraphPoint* N : Neighbors)
 		{
-			C = CalculateHeuristic(C, N, End);
-			Visited = new NodePoint(C,H,N); 
+			UE_LOG(LogTemp, Warning, TEXT("N -> %s"), *N->GetActorNameOrLabel());
+			H = CalculateHeuristic(C, N, End);
+			NodePoint* Visited = new NodePoint(C,H,N, N->Neighbors); 
 
 			if (!FileVisited.Contains(N) || (File.Contains(Visited) && File[File.Find(Visited)]->COST < C))
 			{
@@ -53,23 +54,22 @@ TArray<AActor*> PathfindingAlgo::FindPath(AActor* Start, AActor* End)
 		File.Remove(Node);
 		File.Sort([](const NodePoint& Node1, const NodePoint& Node2) {
 			return Node1.HEURISTIC < Node2.HEURISTIC;
-			});
+		});
 		FileVisited.Add(Node->POINT);
 		Path.Add(Node->POINT);
 	}
 	
 	File.Empty();
 	FileVisited.Empty();
-
 	return Path;
 }
 
-void PathfindingAlgo::AddPoint(AActor* Point)
+void PathfindingAlgo::AddPoint(AGraphPoint* Point)
 {
 	Circuit.Add(Point); 
 }
 
-float PathfindingAlgo::CalculateHeuristic(float Cost, AActor* Start, AActor* End)
+float PathfindingAlgo::CalculateHeuristic(float Cost, AGraphPoint* Start, AGraphPoint* End)
 {
 	return (Cost + Start->GetDistanceTo(End));
 }

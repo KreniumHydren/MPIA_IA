@@ -21,19 +21,23 @@ public:
 	UPROPERTY(EditAnywhere, meta = (MakeEditWidget), Category = "Steering")
 	FVector Velocity;
 
-	UPROPERTY(VisibleAnywhere, Category = "Node")
-	AActor* TargetNode;
-
+	UPROPERTY(BlueprintReadOnly, Category = "Node")
+	AGraphPoint* CurrentTarget;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (MakeEditWidget), Category = "Pathfinding")
-	TArray<FVector> PositionPath;
+	TArray<FVector> Path;
 
 	UPROPERTY(VisibleAnywhere, Category = "Pathfinding")
-	TArray<AActor*> Path;
+	TArray<AGraphPoint*> PointPath;
 
-	UPROPERTY(VisibleAnywhere, Category = "Manager")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Manager")
 	AManager * Manager;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Node")
 	bool bIsFinished = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Node")
+	bool bIsArrival = false; 
 
 	UPROPERTY(VisibleAnywhere, Category = "Node")
 	int CurrentNode = 0;
@@ -66,19 +70,16 @@ public:
 	FVector CircuitPathfinding(FVector Desired, FVector Current);
 
 	UFUNCTION(BlueprintCallable, Category = "Steering")
-	FVector GetDirection(FVector CurrentPostion, FVector CurrentVelocity, FVector TargetPosition, FVector TargetPredictedPosition); 
+	FVector GetDirection(FVector CurrentPosition, FVector CurrentVelocity, FVector TargetPosition, FVector TargetPredictedPosition); 
+	
+	UFUNCTION(BlueprintCallable, Category = "Steering")
+	FVector GetVelocitySteering(FVector SteeringDirection, FVector CurrentVelocity, float CurrentMass); 
 
 	UFUNCTION(BlueprintCallable, Category = "Pathfinding")
 	FVector GetFollowingPath();
-
-	void Change_Behaviour(Behaviour new_behaviour)
-	{
-		last_target_of_path = false;
-		behaviour = new_behaviour;
-	}
-
+	
 	UFUNCTION(BlueprintCallable, Category = "Pathfinding")
-	void SetupPath(TArray<AActor*> Actors); 
+	void SetupPath(TArray<AGraphPoint*> Actors); 
 
 protected:
 	// Called when the game starts or when spawned

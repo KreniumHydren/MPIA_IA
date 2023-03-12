@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GraphPoint.h"
 #include "Pathfinding.h"
 #include "GameFramework/Actor.h"
 #include "Manager.generated.h"
@@ -17,13 +18,13 @@ public:
 	PathfindingAlgo * Pathfinding = new PathfindingAlgo(); 
 
 	UPROPERTY(VisibleAnywhere, Category = "Pathfinding")
-	TArray<AActor*> AllPointsSelected;
+	TArray<AGraphPoint*> AllPointsSelected;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pathfinding")
-	AActor* StartPoint;
+	AGraphPoint* StartPoint;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pathfinding")
-	AActor* EndPoint;
+	AGraphPoint* EndPoint;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -32,22 +33,22 @@ public:
 	void Initialize(); 
 
 	UFUNCTION(BlueprintCallable)
-	void AddPoint(AActor * Point);
+	void AddPoint(AGraphPoint * Point);
 
 	UFUNCTION(BlueprintCallable)
 	void Clear(); 
 
 	UFUNCTION(BlueprintCallable)
-	TArray<AActor*> ShortestPath(AActor* Start, AActor* End);
+	TArray<AGraphPoint*> ShortestPath(AGraphPoint* Start, AGraphPoint* End);
 
 	UFUNCTION(BlueprintCallable)
-	TArray<AActor*> ShortestPathCurrentPoint();
+	TArray<AGraphPoint*> ShortestPathCurrentPoint();
 	
 	UFUNCTION(BlueprintCallable)
-	TArray<AActor*> ShortestPathSelectedPoints();
+	TArray<AGraphPoint*> ShortestPathSelectedPoints();
 
 	UFUNCTION(BlueprintCallable)
-	TArray<AActor*> ShortestPathSelectedPointsWithReturn();
+	TArray<AGraphPoint*> ShortestPathSelectedPointsWithReturn();
 
 	
 protected:

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GraphPoint.h"
 #include "Node.h"
 #include "GameFramework/Actor.h"
 
@@ -12,16 +13,16 @@ class MPIA_IA_API PathfindingAlgo
 public:
 
 	UPROPERTY(VisibleAnywhere, Category = "Graph")
-	TArray<AActor*> Circuit;
+	TArray<AGraphPoint*> Circuit;
 	
 public:	
 	PathfindingAlgo(); 
 
-	TArray<AActor*> FindPath(AActor * Start, AActor * End);
+	TArray<AGraphPoint*> FindPath(AGraphPoint * Start, AGraphPoint * End);
 
-	void AddPoint(AActor *Point); 
+	void AddPoint(AGraphPoint *Point); 
 	
-	float CalculateHeuristic(float Cost, AActor* Start, AActor* End);
+	float CalculateHeuristic(float Cost, AGraphPoint* Start, AGraphPoint* End);
 
 	~PathfindingAlgo();
 	

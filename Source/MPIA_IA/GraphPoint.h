@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Manager.h"
 #include "GameFramework/Actor.h"
 #include "GraphPoint.generated.h"
 
@@ -18,17 +17,23 @@ public:
 	int NeighborsNum;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
-	TArray<AActor*> Neighbors;
+	TArray<AGraphPoint*> Neighbors;
 	
 	UPROPERTY(VisibleAnywhere)
 	TArray<float> NeighborsDist;
 
 	UPROPERTY(EditAnywhere, Category = "Point")
-	AActor* Parent;
+	AGraphPoint* Parent;
 	
 public:	
 	// Sets default values for this actor's properties
 	AGraphPoint();
+
+	UFUNCTION(BlueprintGetter)
+	TArray<AGraphPoint*> GetNeighbors()
+	{
+		return Neighbors; 
+	}
 
 protected:
 	// Called when the game starts or when spawned

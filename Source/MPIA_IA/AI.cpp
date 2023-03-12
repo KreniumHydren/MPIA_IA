@@ -3,6 +3,8 @@
 
 #include "AI.h"
 
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values
 AAI::AAI()
 {
@@ -31,19 +33,19 @@ FVector AAI::ArrivalSteering(FVector Desired, FVector Target, FVector Predicted,
 	
 	Offset = Target - Current;
 	
-	double distance = Offset.Length();
-	if (distance <= 50.0f) return FVector(0, 0, 0);
+	double Dist = Offset.Length();
+	if (Dist <= 50.0f) return FVector(0, 0, 0);
 
-	float ramped_speed = 12.0f * (distance / 400.0f);
-	float clipped_speed = FMath::Min(ramped_speed, 12.0f);
-	Desired = (clipped_speed / distance) * Offset;
+	float RampedSpeed = 12.0f * (Dist / 400.0f);
+	float ClippedSpeed = FMath::Min(RampedSpeed, 12.0f);
+	Desired = (ClippedSpeed / Dist) * Offset;
 	return Desired;
 }
 
 FVector AAI::OnePointPathfinding(FVector Desired, FVector Current)
 {
 	FVector TargetPosition = GetFollowingPath();
-	Manager->StartPoint = TargetNode; 
+	Manager->StartPoint = CurrentTarget; 
 	if (bIsFinished)
 		return ArrivalSteering(Desired, TargetPosition, TargetPosition, Current);
 	else
@@ -53,7 +55,7 @@ FVector AAI::OnePointPathfinding(FVector Desired, FVector Current)
 FVector AAI::SeveralPointsPathfinding(FVector Desired, FVector Current)
 {
 	FVector TargetPosition = GetFollowingPath();
-	Manager->StartPoint = TargetNode; 
+	Manager->StartPoint = CurrentTarget; 
 	if (bIsFinished)
 		return ArrivalSteering(Desired, TargetPosition, TargetPosition, Current);
 	else
@@ -63,11 +65,11 @@ FVector AAI::SeveralPointsPathfinding(FVector Desired, FVector Current)
 FVector AAI::CircuitPathfinding(FVector Desired, FVector Current)
 {
 	FVector TargetPosition = GetFollowingPath();
-    	Manager->StartPoint = TargetNode; 
-    	if (bIsFinished)
-    		return ArrivalSteering(Desired, TargetPosition, TargetPosition, Current);
-    	else
-    		return SeekSteering(Desired, TargetPosition, Current);
+	Manager->StartPoint = CurrentTarget; 
+	if (bIsFinished)
+		return ArrivalSteering(Desired, TargetPosition, TargetPosition, Current);
+	else
+		return SeekSteering(Desired, TargetPosition, Current);
 }
 
 FVector AAI::GetFollowingPath()
@@ -78,9 +80,9 @@ FVector AAI::GetFollowingPath()
 	{
 		if (!bIsFinished && CurrentNode >= TotalNode - 1) bIsFinished = true;
 		
-		Current = PositionPath[CurrentNode];
-		TargetNode = Path[CurrentNode];
-
+		Current = Path[CurrentNode];
+		CurrentTarget = PointPath[CurrentNode];
+		
 		if (FVector::Dist(Position, Current) <= 100.0f)
 		{
 			CurrentNode += 1;
@@ -94,38 +96,43 @@ FVector AAI::GetFollowingPath()
 	return FVector(0, 0, 0);
 }
 
-void AAI::SetupPath(TArray<AActor*> Actors)
+void AAI::SetupPath(TArray<AGraphPoint*> Actors)
 {
-	PositionPath.Empty();
 	Path.Empty();
+	PointPath.Empty();
 	TotalNode = 0;
 	CurrentNode = 0;
 
-	for (AActor* Actor : Actors)
+	for (AGraphPoint* Point : Actors)
 	{
-		PositionPath.Add(Actor->GetTransform().GetLocation());
+		Path.Add(Point->GetTransform().GetLocation());
 		TotalNode += 1;
+		UE_LOG(LogTemp, Warning, TEXT("-> %s"), *Point->GetActorNameOrLabel());
 	}
 	
-	Path = Actors;
+	PointPath = Actors;
 }
 
-FVector AAI::GetDirection(FVector CurrentPostion, FVector CurrentVelocity, FVector TargetPosition, FVector TargetPredictedPosition)
+FVector AAI::GetDirection(FVector CurrentPosition, FVector CurrentVelocity, FVector TargetPosition, FVector TargetPredictedPosition)
 {
 	FVector DesiredVelocity = {0, 0, 0};
 
 	switch(Behaviour)
 	{
+	case Behaviour::Arrival:
+		DesiredVelocity = ArrivalSteering(DesiredVelocity, TargetPosition, TargetPredictedPosition, CurrentPosition);
+		break;
+		
 	case Behaviour::OnlyPoint:
-		DesiredVelocity = OnePointPathfinding(DesiredVelocity, CurrentPostion);
+		DesiredVelocity = OnePointPathfinding(DesiredVelocity, CurrentPosition);
 		break;
 
 	case Behaviour::SeveralPoints:
-		DesiredVelocity = SeveralPointsPathfinding(DesiredVelocity, CurrentPostion);
+		DesiredVelocity = SeveralPointsPathfinding(DesiredVelocity, CurrentPosition);
 		break;
 
 	case Behaviour::Circuit:
-		DesiredVelocity = CircuitPathfinding(DesiredVelocity, CurrentPostion);
+		DesiredVelocity = CircuitPathfinding(DesiredVelocity, CurrentPosition);
 		break;
 	
 	default:
@@ -141,7 +148,10 @@ void AAI::BeginPlay()
 	Super::BeginPlay();
 
 	Position = GetTransform().GetLocation();
-	Velocity = this->GetVelocity();
+	Velocity = GetVelocity();
+	
+	CurrentTarget = nullptr; 
+	Behaviour = Behaviour::Arrival;
 	
 }
 
@@ -150,39 +160,31 @@ void AAI::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	arrival = false;
+	bIsArrival = false;
 
-	if (target == nullptr)
-		target = manager_component->GetStartPointSelect();
-
-	FVector steering_direction(0, 0, 0);
-
-	FVector target_position = target->GetTransform().GetLocation();
-	steering_direction = Get_Steering_Direction(position,velocity, target_position, target_position + target->GetVelocity() * prediction_factor);
+	if (CurrentTarget == nullptr)
+	{
+		CurrentTarget = Manager->StartPoint;
+	}
 	
-	velocity = Calculate_Velocity(steering_direction, velocity, mass);
-	if (velocity.Length() > DBL_EPSILON && !arrival)
-		SetActorRotation(velocity.Rotation() + FRotator(-90.f, 0.0f, 0.0));
+	FVector SteeringDirection(0, 0, 0);
+
+	FVector TargetPosition = CurrentTarget->GetTransform().GetLocation();
+	SteeringDirection = GetDirection(Position,Velocity, TargetPosition, TargetPosition + CurrentTarget->GetVelocity() * 0.3f);
 	
-	// position = position + velocity;
-	if(!arrival)
-		position = position + velocity;
-
-	SetActorLocation(position);
-
+	Velocity = GetVelocitySteering(SteeringDirection, Velocity, 10.0f);
+	if (Velocity.Length() > DBL_EPSILON && !bIsArrival) SetActorRotation(Velocity.Rotation() + FRotator(-90.f, 0.0f, 0.0));
+	if(!bIsArrival) Position += Velocity;
+	SetActorLocation(Position);
 }
 
-FVector AVehicle::Calculate_Velocity(FVector steering_direction, FVector current_velocity, float current_mass)
+FVector AAI::GetVelocitySteering(FVector SteeringDirection, FVector CurrentVelocity, float CurrentMass)
 {
-	// steering_force = truncate(steering_direction, max_force);
-	FVector steering_force = truncate(steering_direction, max_force);
-	// acceleration = steering_force / mass;
-	FVector acceleration = steering_force / current_mass;
-	// velocity = truncate(velocity + acceleration, max_speed);
-	FVector result = current_velocity + acceleration;
-	if (result.Length() > max_speed)
-		result = truncate(result, max_speed);
-	return result;
+	FVector SteeringForce = Truncate(SteeringDirection, 6.0f);
+	FVector Acceleration = SteeringForce / CurrentMass;
+	FVector Result = CurrentVelocity + Acceleration;
+	if (Result.Length() > 12.0f) Result = Truncate(Result, 12.f);
+	return Result;
 }
 
 // Called to bind functionality to input

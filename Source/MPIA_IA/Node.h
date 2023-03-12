@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GraphPoint.h"
 #include "GameFramework/Actor.h"
 
 class MPIA_IA_API NodePoint
@@ -23,20 +24,22 @@ public:
     float HEURISTIC;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	AActor* POINT;
+	AGraphPoint* POINT;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<AActor*> Neighbors; 
+	TArray<AGraphPoint*> Neighbors; 
 	
 public:	
 	// Sets default values for this actor's properties
 	NodePoint();
 
-	NodePoint(float Cost, float Heuristic, AActor* Point);
+	NodePoint(float Cost, float Heuristic, AGraphPoint* Point);
 	
-	NodePoint(float Cost, float Heuristic, FName Name, AActor* Point); 
+	NodePoint(float Cost, float Heuristic, FName Name, AGraphPoint* Point);
+
+	NodePoint(float Cost, float Heuristic, AGraphPoint* Point, TArray<AGraphPoint*> Neighbors);
 	
-	bool isFinish(AActor* Point);
+	bool isFinish(AGraphPoint* Point);
     
     inline bool operator==(const NodePoint& Node) const;
 

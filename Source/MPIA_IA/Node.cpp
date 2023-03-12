@@ -7,10 +7,13 @@
 NodePoint::NodePoint()
 {}
 
-NodePoint::NodePoint(float Cost, float Heuristic, AActor* Point) : COST(Cost), HEURISTIC(Heuristic), POINT(Point) 
+NodePoint::NodePoint(float Cost, float Heuristic, AGraphPoint* Point) : COST(Cost), HEURISTIC(Heuristic), POINT(Point) 
 {}
 
-bool NodePoint::isFinish(AActor* Point)
+NodePoint::NodePoint(float Cost, float Heuristic, AGraphPoint* Point, TArray<AGraphPoint*> Neighbors) : COST(Cost), HEURISTIC(Heuristic), POINT(Point), Neighbors(Neighbors)
+{}
+
+bool NodePoint::isFinish(AGraphPoint* Point)
 {
 	return POINT == Point; 
 }
