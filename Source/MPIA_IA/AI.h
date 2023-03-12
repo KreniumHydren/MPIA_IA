@@ -18,6 +18,9 @@ public:
 	UPROPERTY(EditAnywhere, meta = (MakeEditWidget), Category = "Steering")
 	FVector Position;
 
+	UPROPERTY(EditAnywhere, meta = (MakeEditWidget), Category = "Steering")
+	FVector Velocity;
+
 	UPROPERTY(VisibleAnywhere, Category = "Node")
 	AActor* TargetNode;
 
@@ -67,6 +70,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Pathfinding")
 	FVector GetFollowingPath();
+
+	void Change_Behaviour(Behaviour new_behaviour)
+	{
+		last_target_of_path = false;
+		behaviour = new_behaviour;
+	}
 
 	UFUNCTION(BlueprintCallable, Category = "Pathfinding")
 	void SetupPath(TArray<AActor*> Actors); 

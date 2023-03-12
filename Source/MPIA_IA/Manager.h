@@ -41,7 +41,7 @@ public:
 	TArray<AActor*> ShortestPath(AActor* Start, AActor* End);
 
 	UFUNCTION(BlueprintCallable)
-	TArray<AActor*> ShortestPathCurrentPoint(AActor* Start, AActor* End);
+	TArray<AActor*> ShortestPathCurrentPoint();
 	
 	UFUNCTION(BlueprintCallable)
 	TArray<AActor*> ShortestPathSelectedPoints();

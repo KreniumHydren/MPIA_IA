@@ -139,6 +139,9 @@ FVector AAI::GetDirection(FVector CurrentPostion, FVector CurrentVelocity, FVect
 void AAI::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Position = GetTransform().GetLocation();
+	Velocity = this->GetVelocity();
 	
 }
 
@@ -147,6 +150,39 @@ void AAI::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	arrival = false;
+
+	if (target == nullptr)
+		target = manager_component->GetStartPointSelect();
+
+	FVector steering_direction(0, 0, 0);
+
+	FVector target_position = target->GetTransform().GetLocation();
+	steering_direction = Get_Steering_Direction(position,velocity, target_position, target_position + target->GetVelocity() * prediction_factor);
+	
+	velocity = Calculate_Velocity(steering_direction, velocity, mass);
+	if (velocity.Length() > DBL_EPSILON && !arrival)
+		SetActorRotation(velocity.Rotation() + FRotator(-90.f, 0.0f, 0.0));
+	
+	// position = position + velocity;
+	if(!arrival)
+		position = position + velocity;
+
+	SetActorLocation(position);
+
+}
+
+FVector AVehicle::Calculate_Velocity(FVector steering_direction, FVector current_velocity, float current_mass)
+{
+	// steering_force = truncate(steering_direction, max_force);
+	FVector steering_force = truncate(steering_direction, max_force);
+	// acceleration = steering_force / mass;
+	FVector acceleration = steering_force / current_mass;
+	// velocity = truncate(velocity + acceleration, max_speed);
+	FVector result = current_velocity + acceleration;
+	if (result.Length() > max_speed)
+		result = truncate(result, max_speed);
+	return result;
 }
 
 // Called to bind functionality to input

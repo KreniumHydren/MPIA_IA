@@ -42,7 +42,7 @@ TArray<AActor*> AManager::ShortestPath(AActor* Start, AActor* End)
 	return Pathfinding->FindPath(Start, End); 
 }
 
-TArray<AActor*> AManager::ShortestPathCurrentPoint(AActor* Start, AActor* End)
+TArray<AActor*> AManager::ShortestPathCurrentPoint()
 {
 	return Pathfinding->FindPath(StartPoint, EndPoint);
 }
