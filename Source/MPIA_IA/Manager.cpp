@@ -34,7 +34,8 @@ void AManager::Initialize()
 
 void AManager::AddPoint(AGraphPoint * Point)
 {
-	AllPointsSelected.Add(Point); 
+	AllPointsSelected.Add(Point);
+	UE_LOG(LogTemp, Warning, TEXT("AddPoint"));
 }
 
 void AManager::Clear()
@@ -54,6 +55,8 @@ TArray<AGraphPoint*> AManager::ShortestPathCurrentPoint()
 
 TArray<AGraphPoint*> AManager::ShortestPathSelectedPoints()
 {
+	UE_LOG(LogTemp, Warning, TEXT("SelectedPoints"));
+	
 	TArray<AGraphPoint*> Result;
 	TArray<AGraphPoint*> Array;
 	AGraphPoint* Last = nullptr;
@@ -64,6 +67,8 @@ TArray<AGraphPoint*> AManager::ShortestPathSelectedPoints()
 		Result.Add(StartPoint);
 		return Result;
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("N -> %d"), AllPointsSelected.Num());
 
 	for (AGraphPoint* Point : AllPointsSelected)
 	{
