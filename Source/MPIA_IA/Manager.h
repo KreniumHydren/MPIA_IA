@@ -19,10 +19,10 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Pathfinding")
 	TArray<AActor*> AllPointsSelected;
 
-	UPROPERTY(VisibleAnywhere, Category = "Pathfinding")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pathfinding")
 	AActor* StartPoint;
 
-	UPROPERTY(VisibleAnywhere, Category = "Pathfinding")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pathfinding")
 	AActor* EndPoint;
 	
 public:	
@@ -31,7 +31,11 @@ public:
 
 	void Initialize(); 
 
+	UFUNCTION(BlueprintCallable)
 	void AddPoint(AActor * Point);
+
+	UFUNCTION(BlueprintCallable)
+	void Clear(); 
 
 	UFUNCTION(BlueprintCallable)
 	TArray<AActor*> ShortestPath(AActor* Start, AActor* End);

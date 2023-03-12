@@ -32,6 +32,11 @@ void AManager::AddPoint(AActor * Point)
 	AllPointsSelected.Add(Point); 
 }
 
+void AManager::Clear()
+{
+	AllPointsSelected.Empty(); 
+}
+
 TArray<AActor*> AManager::ShortestPath(AActor* Start, AActor* End)
 {
 	return Pathfinding->FindPath(Start, End); 

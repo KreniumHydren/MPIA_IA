@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Manager.h"
 #include "GameFramework/Actor.h"
 #include "GraphPoint.generated.h"
 
@@ -18,7 +19,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Point")
 	TArray<AActor*> Neighbors;
-
+	
 	UPROPERTY(VisibleAnywhere)
 	TArray<float> NeighborsDist;
 
